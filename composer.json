@@ -1,0 +1,22 @@
+{
+  "name": "horseloft/horseloft-core",
+  "type": "library",
+  "description": "horseloft-php-core",
+  "keywords": ["horseloft", "php"],
+  "authors": [
+    {
+      "name": "YHC",
+      "homepage": "https://github.com/horseloft"
+    }
+  ],
+  "require": {
+    "php": ">=7.1",
+    "ext-swoole": "~4.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Horseloft\\Core\\": "src"
+    }
+  },
+  "license": "MIT"
+}
