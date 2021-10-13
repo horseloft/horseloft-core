@@ -14,11 +14,10 @@ class Server
 
     /**
      * Server constructor.
-     * @param string $env
      * @param string $applicationPath
      * @throws \Exception
      */
-    public function __construct(string $env, string $applicationPath)
+    public function __construct(string $applicationPath)
     {
         if (version_compare(phpversion(), '7.1.0', '<')) {
             exit('PHP-版本不能低于7.1.0');
@@ -29,9 +28,6 @@ class Server
         if (floatval(phpversion('swoole')) < 4.4) {
             exit('PHP-Swoole扩展的版本不能低于4.4');
         }
-        if (empty($env)) {
-            exit('env变量不能为空');
-        }
         if (!is_dir($applicationPath)) {
             exit('无效的applicationPath');
         }
@@ -41,7 +37,7 @@ class Server
         if (!is_file(rtrim($applicationPath, '/') . '/Config/application.php')) {
             exit('配置文件缺失');
         }
-        $this->initialize($env, $applicationPath);
+        $this->initialize($applicationPath);
     }
 
     /**
@@ -65,9 +61,7 @@ class Server
         $this->crontabStarter();
 
         //服务信息展示
-        Spanner::cliPrint(
-            $this->container()->getEnv() . ' start -> ' . $this->container()->getHost() . ':' . $this->container()->getPort()
-        );
+        Spanner::cliPrint('start -> ' . $this->container()->getHost() . ':' . $this->container()->getPort());
 
         //Swoole启动
         if (!$this->container()->getServer()->start()) {
@@ -80,15 +74,11 @@ class Server
      * 设置服务的必须环境参数
      * --------------------------------------------------------------------------
      *
-     * @param string $env
      * @param string $applicationPath
      * @throws \Exception
      */
-    private function initialize(string $env, string $applicationPath)
+    private function initialize(string $applicationPath)
     {
-        // 设置服务环境变量
-        $this->container()->setEnv($env);
-
         // 设置服务的应用路径
         $this->container()->setApplicationPath($applicationPath);
 

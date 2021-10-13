@@ -15,7 +15,7 @@ trait Stater
      */
     protected function timerStarter()
     {
-        if (Helper::envConfig('application.timer') !== true) {
+        if (Helper::config('application.timer') !== true) {
             return;
         }
         $crontabData = Helper::config('timer');
@@ -51,7 +51,7 @@ trait Stater
      */
     protected function crontabStarter()
     {
-        if (Helper::envConfig('application.crontab') !== true) {
+        if (Helper::config('application.crontab') !== true) {
             return;
         }
         $crontabData = Helper::config('crontab');
@@ -104,7 +104,6 @@ trait Stater
         endforeach;
     }
 
-
     /**
      * --------------------------------------------------------------------------
      * 用户自定义进程
@@ -113,7 +112,7 @@ trait Stater
      */
     protected function processStater()
     {
-        if (Helper::envConfig('application.process') !== true) {
+        if (Helper::config('application.process') !== true) {
             return;
         }
         $processData = Helper::config('process');

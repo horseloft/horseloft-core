@@ -109,13 +109,6 @@ class Horseloft
     private $routeConfig = [];
 
     /**
-     * 环境变量
-     *
-     * @var string
-     */
-    private $env = '';
-
-    /**
      * 配置文件目录
      *
      * @var string
@@ -295,22 +288,6 @@ class Horseloft
     public function setConfigDir(string $configDir): void
     {
         $this->configDir = $configDir;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEnv(): string
-    {
-        return $this->env;
-    }
-
-    /**
-     * @param string $env
-     */
-    public function setEnv(string $env): void
-    {
-        $this->env = $env;
     }
 
     /**

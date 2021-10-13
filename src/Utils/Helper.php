@@ -33,36 +33,6 @@ class Helper
     }
 
     /**
-     * 读取配置信息
-     * @param string $name
-     * @param bool $isEnv
-     * @param mixed $default
-     * @return array|false|mixed
-     */
-    private static function getConfig(string $name, bool $isEnv, $default = false)
-    {
-        if (strlen($name) == 0) {
-            return $default;
-        }
-        $list = explode('.', $name);
-
-        if ($isEnv) {
-            array_splice($list, 1, 0, self::horseloft()->getEnv());
-        }
-
-        $var = self::horseloft()->getConfigure();
-        foreach ($list as $value) {
-
-            if (!isset($var[$value])) {
-                return $default;
-            }
-            $var = $var[$value];
-        }
-
-        return $var;
-    }
-
-    /**
      * --------------------------------------------------------------------------
      *  获取Config中配置的数据信息
      * --------------------------------------------------------------------------
@@ -75,29 +45,20 @@ class Helper
      */
     public static function config(string $name, $default = false)
     {
-        return self::getConfig($name, false, $default);
-    }
+        if (strlen($name) == 0) {
+            return $default;
+        }
+        $list = explode('.', $name);
 
-    /**
-     * --------------------------------------------------------------------------
-     *  获取Config中配置的数据信息
-     * --------------------------------------------------------------------------
-     *
-     * 自动读取当前环境变量 并获取配置信息
-     *
-     * 如果未能读取到$name的配置信息，返回$default
-     *
-     * 例：存在配置redis.dev.demo，并且当前环境变量:APP_ENV=dev
-     * 那么：$name = redis.demo
-     * 即可获取redis.dev.demo的配置信息
-     *
-     * @param string $name
-     * @param mixed $default
-     * @return array|false|mixed
-     */
-    public static function envConfig(string $name, $default = false)
-    {
-        return self::getConfig($name, true, $default);
+        $var = self::horseloft()->getConfigure();
+        foreach ($list as $value) {
+
+            if (!isset($var[$value])) {
+                return $default;
+            }
+            $var = $var[$value];
+        }
+        return $var;
     }
 
     /**

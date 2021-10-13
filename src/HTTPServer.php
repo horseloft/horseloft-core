@@ -12,13 +12,12 @@ class HTTPServer extends Server
 
     /**
      * HTTPServer constructor.
-     * @param string $env
      * @param string $applicationPath
      * @throws \Exception
      */
-    public function __construct(string $env, string $applicationPath)
+    public function __construct(string $applicationPath)
     {
-        parent::__construct($env, $applicationPath);
+        parent::__construct($applicationPath);
 
         $this->create();
 
