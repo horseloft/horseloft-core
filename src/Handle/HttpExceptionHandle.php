@@ -7,7 +7,7 @@ use Horseloft\Core\Attic\Container;
 use Horseloft\Core\Drawer\Request;
 use Horseloft\Core\Drawer\Spanner;
 use Horseloft\Core\Exceptions\HorseloftInspectorException;
-use Horseloft\Core\Utils\Helper;
+use Horseloft\Core\Utils\Horseloft;
 
 class HttpExceptionHandle
 {
@@ -62,7 +62,7 @@ class HttpExceptionHandle
         $data[0]['message'] = $this->exception->getMessage();
 
         //日志记录错误信息
-        Helper::logTask($this->logToJson($data, 'error'));
+        Horseloft::logTask($this->logToJson($data, 'error'));
 
         //输出错误信息到命令行
         Spanner::cliExceptionPrint($this->exception);

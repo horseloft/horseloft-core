@@ -3,7 +3,7 @@
 namespace Horseloft\Core\Attic;
 
 use Horseloft\Core\Handle\CrontabHandle;
-use Horseloft\Core\Utils\Helper;
+use Horseloft\Core\Utils\Horseloft;
 
 trait Stater
 {
@@ -15,10 +15,10 @@ trait Stater
      */
     protected function timerStarter()
     {
-        if (Helper::config('application.timer') !== true) {
+        if (Horseloft::env('timer') !== true) {
             return;
         }
-        $crontabData = Helper::config('timer');
+        $crontabData = Horseloft::config('timer');
         if (empty($crontabData) || !is_array($crontabData)) {
             return;
         }
@@ -51,10 +51,10 @@ trait Stater
      */
     protected function crontabStarter()
     {
-        if (Helper::config('application.crontab') !== true) {
+        if (Horseloft::env('crontab') !== true) {
             return;
         }
-        $crontabData = Helper::config('crontab');
+        $crontabData = Horseloft::config('crontab');
         if (empty($crontabData) || !is_array($crontabData)) {
             return;
         }
@@ -112,10 +112,10 @@ trait Stater
      */
     protected function processStater()
     {
-        if (Helper::config('application.process') !== true) {
+        if (Horseloft::env('process') !== true) {
             return;
         }
-        $processData = Helper::config('process');
+        $processData = Horseloft::config('process');
         if (empty($processData) || !is_array($processData)) {
             return;
         }

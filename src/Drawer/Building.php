@@ -2,7 +2,7 @@
 
 namespace Horseloft\Core\Drawer;
 
-class Horseloft
+class Building
 {
     /**
      * @var \Swoole\Http\Server

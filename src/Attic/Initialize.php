@@ -3,7 +3,6 @@
 namespace Horseloft\Core\Attic;
 
 use Horseloft\Core\Handle\RouteHandle;
-use Horseloft\Core\Utils\Helper;
 
 trait Initialize
 {
@@ -12,17 +11,21 @@ trait Initialize
      * 设置服务的配置信息
      * --------------------------------------------------------------------------
      */
-    private function setApplication()
+    private function setEnvironment(string $applicationPath)
     {
-        $application = Helper::config('application');
-        if (empty($application['server_host'])) {
-            exit('域名错误');
+        if (!is_file($applicationPath . '/env.ini')) {
+            exit('env.ini文件不存在');
         }
-        if (empty($application['server_port'])) {
-            exit('端口号错误');
+        $application = parse_ini_file($applicationPath . '/env.ini', true, INI_SCANNER_RAW);
+
+        if (empty($application['host'])) {
+            exit('host错误');
         }
-        $this->container()->setHost($application['server_host']);
-        $this->container()->setPort($application['server_port']);
+        if (empty($application['port'])) {
+            exit('port号错误');
+        }
+        $this->container()->setHost($application['host']);
+        $this->container()->setPort($application['port']);
 
         // debug
         if ($application['debug'] === false) {
@@ -54,10 +57,13 @@ trait Initialize
         $swooleConfig = [
             'log_file' => $this->container()->getLogPath() . '/' . strtolower($this->container()->getLogFilename())
         ];
-        if (is_array($application['swoole_set'])) {
-            $swooleConfig = array_merge($swooleConfig, $application['swoole_set']);
+        if (is_array($application['swoole'])) {
+            $swooleConfig = array_merge($application['swoole'], $swooleConfig);
         }
         $this->container()->setSwooleConfig($swooleConfig);
+
+        // env.ini文件内容以数组格式保留
+        $this->container()->setConfigure(HORSELOFT_CONFIGURE_ENV_NAME, $application);
     }
 
     /**
@@ -143,7 +149,7 @@ trait Initialize
             }
         }
         if (!empty($interceptor)) {
-            $this->container()->setConfigure('interceptor', $interceptor);
+            $this->container()->setConfigure(HORSELOFT_CONFIGURE_INTERCEPTOR_NAME, $interceptor);
         }
         closedir($handle);
     }

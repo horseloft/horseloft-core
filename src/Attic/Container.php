@@ -5,7 +5,7 @@ namespace Horseloft\Core\Attic;
 trait Container
 {
     /**
-     * @return \Horseloft\Core\Drawer\Horseloft
+     * @return \Horseloft\Core\Drawer\Building
      */
     public function container()
     {

@@ -2,7 +2,7 @@
 
 namespace Horseloft\Core\Drawer;
 
-use Horseloft\Core\Utils\Helper;
+use Horseloft\Core\Utils\Horseloft;
 
 class Request
 {
@@ -16,7 +16,7 @@ class Request
      */
     public function getHeader(string $name): string
     {
-        return Helper::getHeader($name);
+        return Horseloft::getHeader($name);
     }
 
     /**
@@ -26,7 +26,7 @@ class Request
      */
     public function getCompleteHeader()
     {
-        return Helper::getCompleteHeader();
+        return Horseloft::getCompleteHeader();
     }
 
     /**
@@ -37,7 +37,7 @@ class Request
      */
     public function getCookie(string $name): string
     {
-        return Helper::getCookie($name);
+        return Horseloft::getCookie($name);
     }
 
     /**
@@ -47,7 +47,7 @@ class Request
      */
     public function getCompleteCookie()
     {
-        return Helper::getCompleteCookie();
+        return Horseloft::getCompleteCookie();
     }
 
     /**
@@ -66,7 +66,7 @@ class Request
      */
     public function get(string $name)
     {
-        return Helper::getRequest($name);
+        return Horseloft::getRequest($name);
     }
 
     /**
@@ -76,6 +76,6 @@ class Request
      */
     public function all()
     {
-        return Helper::getCompleteRequest();
+        return Horseloft::getCompleteRequest();
     }
 }

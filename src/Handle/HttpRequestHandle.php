@@ -8,7 +8,7 @@ use Horseloft\Core\Drawer\Request;
 use Horseloft\Core\Drawer\Spanner;
 use Horseloft\Core\Exceptions\HorseloftInspectorException;
 use Horseloft\Core\Utils\Convert;
-use Horseloft\Core\Utils\Helper;
+use Horseloft\Core\Utils\Horseloft;
 
 class HttpRequestHandle
 {
@@ -38,7 +38,7 @@ class HttpRequestHandle
         $container->setRequestUri($request->server['request_uri']);
 
         // 客户端IP
-        $this->remoteAddrHandle($request);
+        $this->remoteAddressHandle($request);
 
         // 客户端请求参数整合 请求参数合并
         $this->requestParamHandle($request);
@@ -127,7 +127,7 @@ class HttpRequestHandle
             $paramValue = $this->getRequestParamValue($params, $argsName);
 
             if ($value->isDefaultValueAvailable()) { //如果有默认值
-                if ($paramValue == 'horse_loft_null_value') {
+                if ($paramValue == HORSELOFT_NULL_VALUE) {
                     $enableParam = $value->getDefaultValue();
                 } else {
                     //如果方法参数：有类型、不是混合类型、参数类型不符合要求
@@ -138,7 +138,7 @@ class HttpRequestHandle
                 }
             } else { //如果没有默认值
                 //请求参数存在、方法参数没有类型、方法参数是混合类型、请求参数格式=方法参数格式
-                if ($paramValue != 'horse_loft_null_value'
+                if ($paramValue != HORSELOFT_NULL_VALUE
                     && ($argsType == null || $argsType == 'mixed' || $this->isVarType($argsType, $paramValue))
                 ) {
                     $enableParam = $paramValue;
@@ -179,7 +179,7 @@ class HttpRequestHandle
         }
 
         //如果不存在 返回一个标识符
-        return 'horse_loft_null_value';
+        return HORSELOFT_NULL_VALUE;
     }
 
     /**
@@ -237,7 +237,7 @@ class HttpRequestHandle
             return;
         }
         // 拦截器回调方法不存在
-        $interceptorCall = Helper::config('interceptor.' . $interceptor);
+        $interceptorCall = Horseloft::config(HORSELOFT_CONFIGURE_INTERCEPTOR_NAME . '.' . $interceptor);
         if (empty($interceptorCall)) {
             throw new \RuntimeException('Request Not Allowed');
         }
@@ -317,7 +317,7 @@ class HttpRequestHandle
     {
         $log = $this->logToJson($message);
 
-        Helper::logTask($log);
+        Horseloft::logTask($log);
 
         Spanner::cliPrint($log);
     }
@@ -356,7 +356,7 @@ class HttpRequestHandle
      *
      * @param \Swoole\Http\Request $request
      */
-    private function remoteAddrHandle(\Swoole\Http\Request $request)
+    private function remoteAddressHandle(\Swoole\Http\Request $request)
     {
         $requestIP = $request->header['x-forwarded-for'] ?? $request->header['x-real-ip'] ?? $request->server['remote_addr'];
         //如果是代理转发，IP为逗号分隔的字符串

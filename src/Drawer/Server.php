@@ -19,6 +19,7 @@ class Server
      */
     public function __construct(string $applicationPath)
     {
+        $applicationPath = rtrim($applicationPath, '/');
         if (version_compare(phpversion(), '7.1.0', '<')) {
             exit('PHP-版本不能低于7.1.0');
         }
@@ -31,11 +32,8 @@ class Server
         if (!is_dir($applicationPath)) {
             exit('无效的applicationPath');
         }
-        if (!is_dir(rtrim($applicationPath, '/') . '/Config')) {
+        if (!is_dir($applicationPath . '/Config')) {
             exit('配置文件目录缺失');
-        }
-        if (!is_file(rtrim($applicationPath, '/') . '/Config/application.php')) {
-            exit('配置文件缺失');
         }
         $this->initialize($applicationPath);
     }
@@ -79,14 +77,16 @@ class Server
      */
     private function initialize(string $applicationPath)
     {
+        // 加载常量
+
         // 设置服务的应用路径
         $this->container()->setApplicationPath($applicationPath);
 
         // 设置请求指向的命名空间
-        $this->container()->setNamespace('Application');
+        $this->container()->setNamespace(HORSELOFT_NAMESPACE);
 
         // 设置服务配置文件路径
-        $this->container()->setConfigDir(rtrim($applicationPath, '/') . '/Config');
+        $this->container()->setConfigDir($applicationPath . '/Config');
 
         // 读取配置文件 并加入容器
         $this->readSetConfig();
@@ -97,7 +97,7 @@ class Server
         // 读取路由配置 并加入容器
         $this->readSetRoute();
 
-        // 设置服务端口号 - 日志存储路径 等
-        $this->setApplication();
+        // 设置服务端口号 - 日志存储路径 等 Environment
+        $this->setEnvironment($applicationPath);
     }
 }
