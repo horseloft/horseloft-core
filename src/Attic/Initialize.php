@@ -63,7 +63,7 @@ trait Initialize
         $this->container()->setSwooleConfig($swooleConfig);
 
         // env.ini文件内容以数组格式保留
-        $this->container()->setConfigure(HORSELOFT_CONFIGURE_ENV_NAME, $application);
+        $this->container()->setConfigure('_horseloft_configure_env_ini_', $application);
     }
 
     /**
@@ -149,7 +149,7 @@ trait Initialize
             }
         }
         if (!empty($interceptor)) {
-            $this->container()->setConfigure(HORSELOFT_CONFIGURE_INTERCEPTOR_NAME, $interceptor);
+            $this->container()->setConfigure('_horseloft_configure_interceptor_', $interceptor);
         }
         closedir($handle);
     }

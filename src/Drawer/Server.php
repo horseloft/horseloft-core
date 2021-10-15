@@ -77,14 +77,11 @@ class Server
      */
     private function initialize(string $applicationPath)
     {
-        // 加载常量
-        require_once $applicationPath . '/Constants/horse.php';
-
         // 设置服务的应用路径
         $this->container()->setApplicationPath($applicationPath);
 
         // 设置请求指向的命名空间
-        $this->container()->setNamespace(HORSELOFT_NAMESPACE);
+        $this->container()->setNamespace('Application');
 
         // 设置服务配置文件路径
         $this->container()->setConfigDir($applicationPath . '/Config');

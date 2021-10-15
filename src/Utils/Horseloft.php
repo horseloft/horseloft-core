@@ -16,10 +16,10 @@ class Horseloft
      */
     private static function horseloft()
     {
-        if (!isset($GLOBALS[HORSELOFT_CONTAINER_NAME])) {
+        if (!isset($GLOBALS['_HORSELOFT_CORE_CONTAINER_'])) {
             throw new \RuntimeException('missing container');
         }
-        return $GLOBALS[HORSELOFT_CONTAINER_NAME];
+        return $GLOBALS['_HORSELOFT_CORE_CONTAINER_'];
     }
 
     /**
@@ -44,7 +44,7 @@ class Horseloft
      */
     public static function env(string $name = 'env')
     {
-        return self::config(HORSELOFT_CONFIGURE_ENV_NAME . '.' . $name);
+        return self::config('_horseloft_configure_env_ini_.' . $name);
     }
 
     /**

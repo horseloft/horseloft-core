@@ -127,7 +127,7 @@ class HttpRequestHandle
             $paramValue = $this->getRequestParamValue($params, $argsName);
 
             if ($value->isDefaultValueAvailable()) { //如果有默认值
-                if ($paramValue == HORSELOFT_NULL_VALUE) {
+                if ($paramValue == 'horse_loft_null_value') {
                     $enableParam = $value->getDefaultValue();
                 } else {
                     //如果方法参数：有类型、不是混合类型、参数类型不符合要求
@@ -138,7 +138,7 @@ class HttpRequestHandle
                 }
             } else { //如果没有默认值
                 //请求参数存在、方法参数没有类型、方法参数是混合类型、请求参数格式=方法参数格式
-                if ($paramValue != HORSELOFT_NULL_VALUE
+                if ($paramValue != 'horse_loft_null_value'
                     && ($argsType == null || $argsType == 'mixed' || $this->isVarType($argsType, $paramValue))
                 ) {
                     $enableParam = $paramValue;
@@ -179,7 +179,7 @@ class HttpRequestHandle
         }
 
         //如果不存在 返回一个标识符
-        return HORSELOFT_NULL_VALUE;
+        return 'horse_loft_null_value';
     }
 
     /**
@@ -237,7 +237,7 @@ class HttpRequestHandle
             return;
         }
         // 拦截器回调方法不存在
-        $interceptorCall = Horseloft::config(HORSELOFT_CONFIGURE_INTERCEPTOR_NAME . '.' . $interceptor);
+        $interceptorCall = Horseloft::config('_horseloft_configure_interceptor_.' . $interceptor);
         if (empty($interceptorCall)) {
             throw new \RuntimeException('Request Not Allowed');
         }
