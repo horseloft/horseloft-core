@@ -78,6 +78,7 @@ class Server
     private function initialize(string $applicationPath)
     {
         // 加载常量
+        require_once $applicationPath . '/Constants/horse.php';
 
         // 设置服务的应用路径
         $this->container()->setApplicationPath($applicationPath);
