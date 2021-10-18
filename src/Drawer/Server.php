@@ -80,9 +80,6 @@ class Server
      */
     private function initialize(string $applicationPath)
     {
-        // 设置服务端口号 - 日志存储路径 等 Environment
-        $this->readAndSetEnv($applicationPath);
-
         // 设置服务的应用路径
         $this->container()->setApplicationPath($applicationPath);
 
@@ -91,6 +88,9 @@ class Server
 
         // 设置服务配置文件路径
         $this->container()->setConfigDir($applicationPath . '/Config');
+
+        // 设置服务端口号 - 日志存储路径 等 Env
+        $this->readAndSetEnv($applicationPath);
 
         // 读取配置文件 并加入容器
         $this->readSetConfig();
