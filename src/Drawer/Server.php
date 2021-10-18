@@ -36,7 +36,7 @@ class Server
             exit('配置文件目录缺失');
         }
         if (!is_file($applicationPath . '/env.ini')) {
-            exit('env.ini文件不存在');
+            exit('env.ini文件不存在，可以重命名env.ini.example为env.ini');
         }
         $this->initialize($applicationPath);
     }
