@@ -11,12 +11,12 @@ trait Initialize
      * 设置服务的配置信息
      * --------------------------------------------------------------------------
      */
-    private function setEnvironment(string $applicationPath)
+    private function readAndSetEnv(string $applicationPath)
     {
-        if (!is_file($applicationPath . '/env.ini')) {
-            exit('env.ini文件不存在');
+        $application = $this->readIniFile($applicationPath . '/env.ini');
+        if (empty($application)) {
+            exit('env信息异常');
         }
-        $application = parse_ini_file($applicationPath . '/env.ini', true, INI_SCANNER_RAW);
 
         if (empty($application['host'])) {
             exit('host错误');
@@ -231,5 +231,64 @@ trait Initialize
         closedir($handle);
 
         return $fileInfo;
+    }
+
+    /**
+     * 获取ini文件值
+     *
+     * @param string $filename
+     * @return array
+     */
+    private function readIniFile(string $filename)
+    {
+        $iniData = parse_ini_file($filename, true, INI_SCANNER_RAW);
+        if ($iniData === false) {
+            return [];
+        }
+        foreach ($iniData as $key => $value) {
+            if (is_array($value)) {
+                foreach ($value as $k => $v) {
+                    $iniData[$key][$k] = $this->iniValueConvert($v);
+                }
+            } else {
+                $iniData[$key] = $this->iniValueConvert($value);
+            }
+        }
+        return $iniData;
+    }
+
+    /**
+     * ini文件值转换为php变量类型
+     *
+     * @param string $value
+     * @return bool|float|int|string|null
+     */
+    private function iniValueConvert(string $value)
+    {
+        // true
+        if (strtolower($value) === 'true') {
+            return true;
+        }
+
+        // false
+        if (strtolower($value) === 'false') {
+            return false;
+        }
+
+        // null
+        if (strtolower($value) === 'null') {
+            return null;
+        }
+
+        // 不是数字
+        if (is_nan($value)) {
+            return $value;
+        } else {
+            if (strpos($value, '.') === false) {
+                return intval($value);
+            } else {
+                return doubleval($value);
+            }
+        }
     }
 }

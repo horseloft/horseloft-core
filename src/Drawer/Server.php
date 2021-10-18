@@ -35,6 +35,9 @@ class Server
         if (!is_dir($applicationPath . '/Config')) {
             exit('配置文件目录缺失');
         }
+        if (!is_file($applicationPath . '/env.ini')) {
+            exit('env.ini文件不存在');
+        }
         $this->initialize($applicationPath);
     }
 
@@ -77,6 +80,9 @@ class Server
      */
     private function initialize(string $applicationPath)
     {
+        // 设置服务端口号 - 日志存储路径 等 Environment
+        $this->readAndSetEnv($applicationPath);
+
         // 设置服务的应用路径
         $this->container()->setApplicationPath($applicationPath);
 
@@ -94,8 +100,5 @@ class Server
 
         // 读取路由配置 并加入容器
         $this->readSetRoute();
-
-        // 设置服务端口号 - 日志存储路径 等 Environment
-        $this->setEnvironment($applicationPath);
     }
 }
