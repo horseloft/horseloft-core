@@ -280,15 +280,15 @@ trait Initialize
             return null;
         }
 
-        // 不是数字
-        if (is_nan($value)) {
-            return $value;
-        } else {
+        // 数字
+        if (is_numeric($value)) {
             if (strpos($value, '.') === false) {
                 return intval($value);
             } else {
                 return doubleval($value);
             }
+        } else {
+            return $value;
         }
     }
 }
