@@ -2,7 +2,7 @@
 
 namespace Horseloft\Core\Attic;
 
-trait HorseloftReading
+trait BuildingReading
 {
     /**
      * --------------------------------------------------------------------------

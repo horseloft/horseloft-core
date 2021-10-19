@@ -2,13 +2,13 @@
 
 namespace Horseloft\Core\Utils;
 
-use Horseloft\Core\Attic\HorseloftReading;
-use Horseloft\Core\Attic\HorseloftSetting;
+use Horseloft\Core\Attic\BuildingReading;
+use Horseloft\Core\Attic\BuildingSetting;
 use Horseloft\Core\Drawer\Log;
 
 class Horseloft
 {
-    use HorseloftSetting,HorseloftReading;
+    use BuildingSetting,BuildingReading;
 
     /**
      * horseloft service object
@@ -40,11 +40,12 @@ class Horseloft
      * 获取env.ini配置项的值
      *
      * @param string $name
+     * @param mixed $default
      * @return false|mixed
      */
-    public static function env(string $name = 'env')
+    public static function env(string $name = 'env', $default = false)
     {
-        return self::config('_horseloft_configure_env_ini_.' . $name);
+        return self::config('_horseloft_configure_env_ini_.' . $name, $default);
     }
 
     /**
