@@ -6,7 +6,38 @@ use Horseloft\Core\Utils\Horseloft;
 
 class Request
 {
-    private $files = [];
+    /**
+     * 添加请求参数
+     *
+     * @param string $name
+     * @param $value
+     */
+    public function set(string $name, $value)
+    {
+        Horseloft::setRequest($name, $value);
+    }
+
+    /**
+     * 获取指定的请求参数
+     *
+     * @param string $name
+     * @param mixed $default
+     * @return mixed
+     */
+    public function get(string $name, $default = '')
+    {
+        return Horseloft::getRequest($name, $default);
+    }
+
+    /**
+     * 获取全部请求参数
+     *
+     * @return array
+     */
+    public function all()
+    {
+        return Horseloft::getCompleteRequest();
+    }
 
     /**
      * 获取header
@@ -51,31 +82,42 @@ class Request
     }
 
     /**
-     * @return array
-     */
-    public function getFiles(): array
-    {
-        return $this->files;
-    }
-
-    /**
-     * 获取指定的请求参数
-     *
-     * @param string $name
-     * @return mixed|string
-     */
-    public function get(string $name)
-    {
-        return Horseloft::getRequest($name);
-    }
-
-    /**
-     * 获取全部请求参数
+     * 获取上传的全部文件
      *
      * @return array
      */
-    public function all()
+    public function getUploadFiles(): array
     {
-        return Horseloft::getCompleteRequest();
+        return Horseloft::files();
+    }
+
+    /**
+     * 获取请求的URI
+     *
+     * @return string
+     */
+    public function getUri()
+    {
+        return Horseloft::requestUri();
+    }
+
+    /**
+     * 获取请求方式
+     *
+     * @return string
+     */
+    public function getMethod()
+    {
+        return Horseloft::requestMethod();
+    }
+
+    /**
+     * 获取客户端IP
+     *
+     * @return string
+     */
+    public function getIP()
+    {
+        return Horseloft::requestIP();
     }
 }

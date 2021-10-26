@@ -163,6 +163,29 @@ class Building
     private $defaultRoute = true;
 
     /**
+     * 是否记录错误日志
+     *
+     * @var bool
+     */
+    private $errorLog = false;
+
+    /**
+     * @return bool
+     */
+    public function isErrorLog(): bool
+    {
+        return $this->errorLog;
+    }
+
+    /**
+     * @param bool $errorLog
+     */
+    public function setErrorLog(bool $errorLog): void
+    {
+        $this->errorLog = $errorLog;
+    }
+
+    /**
      * @return bool
      */
     public function isDefaultRoute(): bool
@@ -326,11 +349,35 @@ class Building
     }
 
     /**
+     * @return \Swoole\Http\Server
+     */
+    public function getServer(): \Swoole\Http\Server
+    {
+        return $this->server;
+    }
+
+    /**
      * @param string $host
      */
     public function setHost(string $host): void
     {
         $this->host = $host;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHost(): string
+    {
+        return $this->host;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPort(): string
+    {
+        return $this->port;
     }
 
     /**
@@ -350,6 +397,22 @@ class Building
     }
 
     /**
+     * @return string
+     */
+    public function getNamespace(): string
+    {
+        return $this->namespace;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLogPath(): string
+    {
+        return $this->logPath;
+    }
+
+    /**
      * @param string $logPath
      */
     public function setLogPath(string $logPath): void
@@ -363,6 +426,22 @@ class Building
     public function setLogFilename(string $logFilename): void
     {
         $this->logFilename = $logFilename;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLogFilename(): string
+    {
+        return $this->logFilename;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCrontabConfig(): array
+    {
+        return $this->crontabConfig;
     }
 
     /**
@@ -382,6 +461,22 @@ class Building
     }
 
     /**
+     * @return array
+     */
+    public function getSwooleConfig(): array
+    {
+        return $this->swooleConfig;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRequestHeader(): array
+    {
+        return $this->requestHeader;
+    }
+
+    /**
      * @param array $requestHeader
      */
     public function setRequestHeader(array $requestHeader): void
@@ -398,6 +493,22 @@ class Building
     }
 
     /**
+     * @return string
+     */
+    public function getRequestIP(): string
+    {
+        return $this->requestIP;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRequestCookie(): array
+    {
+        return $this->requestCookie;
+    }
+
+    /**
      * @param array $requestCookie
      */
     public function setRequestCookie(array $requestCookie): void
@@ -411,6 +522,22 @@ class Building
     public function setRequestFiles(array $requestFiles): void
     {
         $this->requestFiles = $requestFiles;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRequestFiles(): array
+    {
+        return $this->requestFiles;
+    }
+
+    /**
+     * @return \Swoole\Http\Response
+     */
+    public function getResponse(): \Swoole\Http\Response
+    {
+        return $this->response;
     }
 
     /**
@@ -431,126 +558,6 @@ class Building
     }
 
     /**
-     *
-     * @param string $key
-     * @param $value
-     */
-    public function setRouteConfig(string $key, $value): void
-    {
-        $this->routeConfig[$key] = $value;
-    }
-
-    /*
-     * ------------------------------------------------------------------
-     *  GET
-     * ------------------------------------------------------------------
-     */
-
-    /**
-     * @return \Swoole\Http\Server
-     */
-    public function getServer(): \Swoole\Http\Server
-    {
-        return $this->server;
-    }
-
-    /**
-     * @return string
-     */
-    public function getHost(): string
-    {
-        return $this->host;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPort(): string
-    {
-        return $this->port;
-    }
-
-    /**
-     * @return string
-     */
-    public function getNamespace(): string
-    {
-        return $this->namespace;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLogPath(): string
-    {
-        return $this->logPath;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLogFilename(): string
-    {
-        return $this->logFilename;
-    }
-
-    /**
-     * @return array
-     */
-    public function getCrontabConfig(): array
-    {
-        return $this->crontabConfig;
-    }
-
-    /**
-     * @return array
-     */
-    public function getSwooleConfig(): array
-    {
-        return $this->swooleConfig;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRequestHeader(): array
-    {
-        return $this->requestHeader;
-    }
-
-    /**
-     * @return string
-     */
-    public function getRequestIP(): string
-    {
-        return $this->requestIP;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRequestCookie(): array
-    {
-        return $this->requestCookie;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRequestFiles(): array
-    {
-        return $this->requestFiles;
-    }
-
-    /**
-     * @return \Swoole\Http\Response
-     */
-    public function getResponse(): \Swoole\Http\Response
-    {
-        return $this->response;
-    }
-
-    /**
      * @param string $name
      * @return array
      */
@@ -560,6 +567,16 @@ class Building
             return $this->configure;
         }
         return $this->configure[$name] ?? [];
+    }
+
+    /**
+     *
+     * @param string $key
+     * @param $value
+     */
+    public function setRouteConfig(string $key, $value): void
+    {
+        $this->routeConfig[$key] = $value;
     }
 
     /**

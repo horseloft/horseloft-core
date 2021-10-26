@@ -30,10 +30,25 @@ class HttpExceptionHandle
     /**
      * 获取异常信息
      *
-     * @return array|false|mixed|string
+     * @return mixed
      */
     public function getResponse()
     {
+        $class = (new \ReflectionClass($this->exception))->getShortName();
+        $message = $this->exception->getMessage();
+        $file = $this->exception->getFile();
+        $line = $this->exception->getLine();
+        $trace = $this->exception->getTraceAsString();
+        $msg = $class . ' ERROR: ' . $message . ' in ' . $file . '(' . $line . ")\n" . $trace;
+
+        //输出错误信息到命令行
+        Spanner::cliPrint($msg);
+
+        //日志记录错误信息
+        if ($this->container()->isErrorLog()) {
+            Horseloft::logTask($this->logToJson(['error' => $msg], 'error'));
+        }
+
         // 拦截器自定义异常
         $customize = $this->getCustomizeException();
         if (!is_null($customize)) {
@@ -46,32 +61,7 @@ class HttpExceptionHandle
             return $horseloft;
         }
 
-        return $this->getThrowableException();
-    }
-
-    /**
-     * 日志记录并输出到命令行
-     *
-     * @return array
-     */
-    private function getThrowableException()
-    {
-        $data = $this->exception->getTrace();
-        $data[0]['file'] = $this->exception->getFile();
-        $data[0]['line'] = $this->exception->getLine();
-        $data[0]['message'] = $this->exception->getMessage();
-
-        //日志记录错误信息
-        Horseloft::logTask($this->logToJson($data, 'error'));
-
-        //输出错误信息到命令行
-        Spanner::cliExceptionPrint($this->exception);
-
-        //是否输出错误数据
-        if (!$this->container()->isDebug()) {
-            $data = [];
-        }
-        return $data;
+        return $this->container()->isDebug() ? $this->exception->getMessage() : '';
     }
 
     /**
@@ -103,9 +93,8 @@ class HttpExceptionHandle
      */
     private function getCustomizeException()
     {
-        $reflection = new \ReflectionClass($this->exception);
         $call = [
-            $this->container()->getNamespace() . '\Exceptions\\' . $reflection->getName(),
+            $this->container()->getNamespace() . '\Exceptions\RuntimeCatch',
             'handle'
         ];
         if (is_callable($call)) {

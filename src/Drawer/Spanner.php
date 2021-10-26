@@ -5,6 +5,20 @@ namespace Horseloft\Core\Drawer;
 class Spanner
 {
     /**
+     * 非字符串以json格式返回
+     *
+     * @param $data
+     * @return string
+     */
+    public static function response($data)
+    {
+        if (is_string($data)) {
+            return $data;
+        }
+        return self::encode($data);
+    }
+
+    /**
      * json
      * @param $data
      * @return string

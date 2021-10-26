@@ -28,17 +28,18 @@ trait Initialize
         $this->container()->setPort($application['port']);
 
         // debug
-        if ($application['debug'] === false) {
-            $this->container()->setDebug(false);
-        } else {
+        if ($application['debug'] === true) {
             $this->container()->setDebug(true);
         }
 
         // default route
         if ($application['default_route'] === false) {
             $this->container()->setDefaultRoute(false);
-        } else {
-            $this->container()->setDefaultRoute(true);
+        }
+
+        // error log
+        if ($application['error_log'] === true) {
+            $this->container()->setErrorLog(true);
         }
 
         // 日志目录、日志文件

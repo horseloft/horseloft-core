@@ -7,6 +7,7 @@ use Horseloft\Core\Attic\Container;
 use Horseloft\Core\Drawer\Request;
 use Horseloft\Core\Drawer\Spanner;
 use Horseloft\Core\Exceptions\HorseloftInspectorException;
+use Horseloft\Core\Exceptions\HorseloftRequestException;
 use Horseloft\Core\Utils\Convert;
 use Horseloft\Core\Utils\Horseloft;
 
@@ -64,8 +65,8 @@ class HttpRequestHandle
         $method = new \ReflectionMethod($this->container()->getRouteCallback());
 
         //调用的方法必须是静态方法
-        if ($method->isStatic() == false) {
-            throw new \RuntimeException('Request Not Found');
+        if (!$method->isStatic()) {
+            throw new HorseloftRequestException('Request Not Found');
         }
 
         //调用的方法没有参数
@@ -93,17 +94,32 @@ class HttpRequestHandle
             return $callArgs;
         }
 
+        $firstParamType = $method->getParameters()[0]->getType();
+
+        /*
+         * --------------------------------------------------------------------------
+         * 如果方法的参数数量为1 版本参数类型为Request
+         * --------------------------------------------------------------------------
+         * 
+         */
+        if ($paramterNumber == 1
+            && !is_null($firstParamType)
+            && $firstParamType->getName() == 'Horseloft\Core\Drawer\Request'
+        ) {
+            return [new Request()];
+        }
+
         /*
          * --------------------------------------------------------------------------
          * 如果方法的参数数量为1，并且是数组格式或者无格式，或者混合类型格式，则把请求参数作为一个数组传递
          * --------------------------------------------------------------------------
          *
          */
-        $firstParamType = $method->getParameters()[0]->getType();
-        if (($paramterNumber == 1 || $paramterRequireNumber == 1) && is_null($firstParamType) || $firstParamType == 'array') {
+        if (($paramterNumber == 1 || $paramterRequireNumber == 1)
+            && is_null($firstParamType) || $firstParamType->getName() == 'array') {
             return [$params];
         }
-        throw new \RuntimeException('Bad Request Param');
+        throw new HorseloftRequestException('Bad Request Param');
     }
 
     /**
@@ -131,15 +147,21 @@ class HttpRequestHandle
                     $enableParam = $value->getDefaultValue();
                 } else {
                     //如果方法参数：有类型、不是混合类型、参数类型不符合要求
-                    if ($argsType != null && $argsType != 'mixed' && !$this->isVarType($argsType, $paramValue)) {
+                    if ($argsType != null
+                        && $argsType->getName() != 'mixed'
+                        && !$this->isVarType($argsType->getName(), $paramValue)
+                    ) {
                         return [];
                     }
                     $enableParam = $paramValue;
                 }
             } else { //如果没有默认值
                 //请求参数存在、方法参数没有类型、方法参数是混合类型、请求参数格式=方法参数格式
-                if ($paramValue != 'horse_loft_null_value'
-                    && ($argsType == null || $argsType == 'mixed' || $this->isVarType($argsType, $paramValue))
+                if ($paramValue !== 'horse_loft_null_value' &&
+                    ($argsType == null
+                        || $argsType->getName() == 'mixed'
+                        || $this->isVarType($argsType->getName(), $paramValue)
+                    )
                 ) {
                     $enableParam = $paramValue;
                 } else {
@@ -208,10 +230,18 @@ class HttpRequestHandle
                 }
                 break;
             case 'bool':
-                if (gettype($var) != 'boolean' && $var !== 1 && $var !== 0) {
+                if (gettype($var) == 'boolean'
+                    || $var === 1
+                    || $var === '1'
+                    || $var === '0'
+                    || $var === 0
+                    || strtolower($var) === 'true'
+                    || strtolower($var) === 'false'
+                ) {
+                    return true;
+                } else {
                     return false;
                 }
-                break;
             case 'float':
             case 'double':
                 if (!is_numeric($var)) {
@@ -239,7 +269,7 @@ class HttpRequestHandle
         // 拦截器回调方法不存在
         $interceptorCall = Horseloft::config('_horseloft_configure_interceptor_.' . $interceptor);
         if (empty($interceptorCall)) {
-            throw new \RuntimeException('Request Not Allowed');
+            throw new HorseloftRequestException('Request Not Allowed');
         }
 
         // 拦截器返回值 === true 时，允许通过
@@ -265,7 +295,7 @@ class HttpRequestHandle
     {
         $uri = trim($this->container()->getRequestUri(), '/');
         if (empty($uri)) {
-            throw new \RuntimeException('Bad Request uri');
+            throw new HorseloftRequestException('Bad Request Uri');
         }
 
         $routeUri = $this->container()->getRequestMethod() . '_' . $uri;
@@ -275,11 +305,11 @@ class HttpRequestHandle
         if (empty($currentRoute)) {
             // 启默认路由 | 检测是使用默认路由
             if ($this->container()->isDefaultRoute() == false) {
-                throw new \RuntimeException('Request Not Found');
+                throw new HorseloftRequestException('Request Not Found');
             }
             $uriList = explode('/', $uri);
             if ($uriList < 2) {
-                throw new \RuntimeException('Request Not Found');
+                throw new HorseloftRequestException('Request Not Found');
             }
             $uriList = array_map('ucfirst', $uriList);
 
@@ -303,7 +333,7 @@ class HttpRequestHandle
         }
 
         if (!is_callable($callback)) {
-            throw new \RuntimeException('Request Not Found');
+            throw new HorseloftRequestException('Request Not Found');
         }
         $this->container()->setRouteCallback($callback);
     }

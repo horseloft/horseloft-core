@@ -60,18 +60,19 @@ trait BuildingReading
      * 获取指定的请求参数值
      *
      * @param string $name
-     * @return mixed|string
+     * @param mixed $default
+     * @return mixed
      */
-    public static function getRequest(string $name)
+    public static function getRequest(string $name, $default = '')
     {
         if (strlen(trim($name)) == 0) {
-            return '';
+            return $default;
         }
         $params = self::horseloft()->getParams();
         if (isset($params[$name])) {
             return  $params[$name];
         }
-        return '';
+        return $default;
     }
 
     /**

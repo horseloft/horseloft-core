@@ -80,12 +80,12 @@ trait HttpEvents
                 $returnData = call_user_func_array($this->container()->getRouteCallback(), $requestHandle->getRequestArgs());
 
                 //数据返回至客户端
-                $response->end(Spanner::encode($returnData));
+                $response->end(Spanner::response($returnData));
 
             } catch (\Throwable $e) {
                 $exceptionHandle = new HttpExceptionHandle($e);
                 //数据返回至客户端
-                $response->end(Spanner::encode($exceptionHandle->getResponse()));
+                $response->end(Spanner::response($exceptionHandle->getResponse()));
             }
             //主动关闭本次连接
             $this->container()->getServer()->close($response->fd);
