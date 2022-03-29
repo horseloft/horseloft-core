@@ -105,7 +105,7 @@ class Horseloft
 
     /**
      * --------------------------------------------------------------------------
-     * 使用task异步写日志
+     * 使用task写日志【异步】
      * --------------------------------------------------------------------------
      *
      * $filename为空 则使用默认日志文件
@@ -114,7 +114,7 @@ class Horseloft
      * @param string $filename
      * @return false|int
      */
-    public static function logTask($message, string $filename = '')
+    public static function taskLog($message, string $filename = '')
     {
         $horseloft = self::horseloft();
 
@@ -135,7 +135,7 @@ class Horseloft
 
     /**
      * --------------------------------------------------------------------------
-     * 日志写入
+     * 日志写入【同步】
      * --------------------------------------------------------------------------
      *
      * $filename为空 则使用默认日志文件

@@ -347,7 +347,7 @@ class HttpRequestHandle
     {
         $log = $this->logToJson($message);
 
-        Horseloft::logTask($log);
+        Horseloft::taskLog($log);
 
         Spanner::cliPrint($log);
     }

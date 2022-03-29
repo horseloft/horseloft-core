@@ -46,11 +46,11 @@ class HttpExceptionHandle
 
         //日志记录错误信息
         if ($this->container()->isErrorLog()) {
-            Horseloft::logTask($this->logToJson(['error' => $msg], 'error'));
+            Horseloft::taskLog($this->logToJson(['error' => $msg], 'error'));
         }
 
         // 拦截器自定义异常
-        $customize = $this->getCustomizeException();
+        $customize = $this->getCustomizeException($class);
         if (!is_null($customize)) {
             return $customize;
         }
@@ -91,10 +91,10 @@ class HttpExceptionHandle
      *
      * @return false|mixed|null
      */
-    private function getCustomizeException()
+    private function getCustomizeException(string $class)
     {
         $call = [
-            $this->container()->getNamespace() . '\Exceptions\RuntimeCatch',
+            $this->container()->getNamespace() . '\Exceptions\\' . $class,
             'handle'
         ];
         if (is_callable($call)) {
