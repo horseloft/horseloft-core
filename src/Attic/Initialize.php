@@ -24,47 +24,47 @@ trait Initialize
         if (empty($application['port'])) {
             exit('port号错误');
         }
-        $this->container()->setHost($application['host']);
-        $this->container()->setPort($application['port']);
+        $this->container->setHost($application['host']);
+        $this->container->setPort($application['port']);
 
         // debug
         if ($application['debug'] === true) {
-            $this->container()->setDebug(true);
+            $this->container->setDebug(true);
         }
 
         // default route
         if ($application['default_route'] === false) {
-            $this->container()->setDefaultRoute(false);
+            $this->container->setDefaultRoute(false);
         }
 
         // error log
         if ($application['error_log'] === true) {
-            $this->container()->setErrorLog(true);
+            $this->container->setErrorLog(true);
         }
 
         // 日志目录、日志文件
         if (is_dir($application['log_path'])) {
-            $this->container()->setLogPath($application['log_path']);
+            $this->container->setLogPath($application['log_path']);
         } else {
-            $thisLogPath = $this->container()->getApplicationPath() . '/Log';
+            $thisLogPath = $this->container->getApplicationPath() . '/Log';
             if (!is_dir($thisLogPath)) {
                 exit('log目录缺失');
             }
-            $this->container()->setLogPath($thisLogPath);
+            $this->container->setLogPath($thisLogPath);
         }
-        $this->container()->setLogFilename('horseloft.log');
+        $this->container->setLogFilename('horseloft.log');
 
         // 服务启动项
         $swooleConfig = [
-            'log_file' => $this->container()->getLogPath() . '/' . strtolower($this->container()->getLogFilename())
+            'log_file' => $this->container->getLogPath() . '/' . strtolower($this->container()->getLogFilename())
         ];
         if (is_array($application['swoole'])) {
             $swooleConfig = array_merge($application['swoole'], $swooleConfig);
         }
-        $this->container()->setSwooleConfig($swooleConfig);
+        $this->container->setSwooleConfig($swooleConfig);
 
         // env.ini文件内容以数组格式保留
-        $this->container()->setConfigure('_horseloft_configure_env_ini_', $application);
+        $this->container->setConfigure('_horseloft_configure_env_ini_', $application);
     }
 
     /**
@@ -74,15 +74,15 @@ trait Initialize
      */
     private function readSetRoute()
     {
-        $routePath = $this->container()->getApplicationPath() . '/Route';
+        $routePath = $this->container->getApplicationPath() . '/Route';
         $routeList = $this->readApplicationFile($routePath);
 
-        $routeHandle = new RouteHandle($this->container()->getNamespace() . '\Controller\\');
+        $routeHandle = new RouteHandle($this->container->getNamespace() . '\Controller\\');
 
         foreach ($routeList as $list) :
             $route = $routeHandle->getRequestRoute($list);
             foreach ($route as $value) {
-                $this->container()->setRouteConfig($value['uri'], $value['request']);
+                $this->container->setRouteConfig($value['uri'], $value['request']);
             }
         endforeach;
     }
@@ -102,13 +102,13 @@ trait Initialize
      */
     private function readSetInterceptor()
     {
-        $dir = $configPath = $this->container()->getApplicationPath() . '/Interceptor';
+        $dir = $configPath = $this->container->getApplicationPath() . '/Interceptor';
         if (!is_dir($dir)) {
             return;
         }
 
         $interceptor = [];
-        $namespace = $this->container()->getNamespace() . '\Interceptor\\';
+        $namespace = $this->container->getNamespace() . '\Interceptor\\';
         $handle = opendir($configPath);
         while (false !== $file = readdir($handle)) {
             if ($file == '.' || $file == '..') {
@@ -150,7 +150,7 @@ trait Initialize
             }
         }
         if (!empty($interceptor)) {
-            $this->container()->setConfigure('_horseloft_configure_interceptor_', $interceptor);
+            $this->container->setConfigure('_horseloft_configure_interceptor_', $interceptor);
         }
         closedir($handle);
     }
@@ -162,7 +162,7 @@ trait Initialize
      */
     private function readSetConfig()
     {
-        $configPath = $this->container()->getConfigDir();
+        $configPath = $this->container->getConfigDir();
         if (!is_dir($configPath)) {
             exit('Config目录缺失');
         }
@@ -181,7 +181,7 @@ trait Initialize
                     if (!is_array($configure)) {
                         continue;
                     }
-                    $this->container()->setConfigure(substr($file, 0, -4), $configure);
+                    $this->container->setConfigure(substr($file, 0, -4), $configure);
 
                 } catch (\Exception $e){
                     continue;

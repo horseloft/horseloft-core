@@ -39,7 +39,7 @@ trait Stater
                     }
                 });
             });
-            $this->container()->getServer()->addProcess($process);
+            $this->server->addProcess($process);
         endforeach;
     }
 
@@ -100,7 +100,7 @@ trait Stater
                     }
                 });
             });
-            $this->container()->getServer()->addProcess($process);
+            $this->server->addProcess($process);
         endforeach;
     }
 
@@ -135,7 +135,7 @@ trait Stater
                     call_user_func_array($callback, $args);
                 }
             });
-            $this->container()->getServer()->addProcess($process);
+            $this->server->addProcess($process);
         endforeach;
     }
 }

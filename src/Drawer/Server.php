@@ -10,7 +10,20 @@ class Server
 {
     use Container,Stater,Initialize;
 
+    /**
+     * @var int
+     */
     protected $connectTime;
+
+    /**
+     * @var \Swoole\Http\Server
+     */
+    protected $server;
+
+    /**
+     * @var \Horseloft\Core\Drawer\Building
+     */
+    protected $container;
 
     /**
      * Server constructor.
@@ -38,6 +51,7 @@ class Server
         if (!is_file($applicationPath . '/env.ini')) {
             exit('env.ini文件不存在，可以重命名env.ini.example为env.ini');
         }
+        $this->container = $this->container();
         $this->initialize($applicationPath);
     }
 
@@ -50,7 +64,7 @@ class Server
     final public function start()
     {
         //设置配置项
-        $this->container()->getServer()->set($this->container()->getSwooleConfig());
+        $this->server->set($this->container->getSwooleConfig());
 
         // 毫秒定时器
         $this->timerStarter();
@@ -62,10 +76,10 @@ class Server
         $this->crontabStarter();
 
         //服务信息展示
-        Spanner::cliPrint('start -> ' . $this->container()->getHost() . ':' . $this->container()->getPort());
+        Spanner::cliPrint('start -> ' . $this->container->getHost() . ':' . $this->container->getPort());
 
         //Swoole启动
-        if (!$this->container()->getServer()->start()) {
+        if (!$this->server->start()) {
             exit('server start fail');
         }
     }
@@ -81,13 +95,13 @@ class Server
     private function initialize(string $applicationPath)
     {
         // 设置服务的应用路径
-        $this->container()->setApplicationPath($applicationPath);
+        $this->container->setApplicationPath($applicationPath);
 
         // 设置请求指向的命名空间
-        $this->container()->setNamespace('Application');
+        $this->container->setNamespace('Application');
 
         // 设置服务配置文件路径
-        $this->container()->setConfigDir($applicationPath . '/Config');
+        $this->container->setConfigDir($applicationPath . '/Config');
 
         // 设置服务端口号 - 日志存储路径 等 Env
         $this->readAndSetEnv($applicationPath);

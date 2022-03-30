@@ -2,6 +2,8 @@
 
 namespace Horseloft\Core\Drawer;
 
+use Horseloft\Core\Exceptions\HorseloftCurlException;
+
 class Curl
 {
     private $option = [];
@@ -13,11 +15,11 @@ class Curl
     public function __construct(string $method, string $url, array $postData = [])
     {
         if ($this->isSupportMethod($method) == false) {
-            throw new \RuntimeException('Unsupported method:' . $method);
+            throw new HorseloftCurlException('Unsupported method:' . $method);
         }
 
         if ($this->isSupportHttp($url) == false) {
-            throw new \RuntimeException('Only supports HTTP and HTTPS');
+            throw new HorseloftCurlException('Only supports HTTP and HTTPS');
         }
 
         $this->option = [
@@ -70,7 +72,7 @@ class Curl
 
         $handle = curl_init();
         if ($handle === false) {
-            throw new \RuntimeException('curl initialization failed');
+            throw new HorseloftCurlException('curl initialization failed');
         }
 
         if (!empty($this->postData)) {
@@ -78,16 +80,16 @@ class Curl
         }
 
         if (curl_setopt_array($handle, $this->option) == false) {
-            throw new \RuntimeException('curl option not successfully');
+            throw new HorseloftCurlException('curl option not successfully');
         }
 
         if (!empty($this->optionList) && curl_setopt_array($handle, $this->optionList) == false) {
-            throw new \RuntimeException('curl option failed');
+            throw new HorseloftCurlException('curl option failed');
         }
 
         $curlBack = curl_exec($handle);
         if (curl_errno($handle) > 0) {
-            throw new \RuntimeException(curl_error($handle));
+            throw new HorseloftCurlException(curl_error($handle));
         }
         curl_close($handle);
 

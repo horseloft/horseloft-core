@@ -43,9 +43,8 @@ class HTTPServer extends Server
     private function create()
     {
         try {
-            $this->container()->setServer(
-                new \Swoole\Http\Server($this->container()->getHost(), $this->container()->getPort())
-            );
+            $this->server = new \Swoole\Http\Server($this->container->getHost(), $this->container->getPort());
+            $this->container->setServer($this->server);
         } catch (\Exception $e) {
             exit('HTTP服务启动失败 ' . $e->getMessage());
         }

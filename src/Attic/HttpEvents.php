@@ -19,7 +19,7 @@ trait HttpEvents
      */
     private function onConnect()
     {
-        $this->container()->getServer()->on('connect', function () {
+        $this->server->on('connect', function () {
             $this->connectTime = microtime(true);
         });
     }
@@ -34,7 +34,7 @@ trait HttpEvents
      */
     private function onClose()
     {
-        $this->container()->getServer()->on('close', function () {
+        $this->server->on('close', function () {
             $costTime = (microtime(true) - $this->connectTime) * 1000;
             $runTime = round($costTime, 1);
             if ($runTime < 100) {
@@ -56,7 +56,7 @@ trait HttpEvents
      */
     private function onRequest()
     {
-        $this->container()->getServer()->on('request', function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) {
+        $this->server->on('request', function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) {
             try {
                 //设置请求的开始时间
                 $this->connectTime = microtime(true);
@@ -64,7 +64,7 @@ trait HttpEvents
                 //ico请求
                 if ($request->server['request_uri'] == '/favicon.ico') {
                     $response->end();
-                    $this->container()->getServer()->close($response->fd);
+                    $this->server->close($response->fd);
                     return;
                 }
                 //设置默认的输出类型为json；header为NGINX
@@ -72,12 +72,12 @@ trait HttpEvents
                 $response->header('Server', 'Nginx');
 
                 // 当前一次response加入容器
-                $this->container()->setResponse($response);
+                $this->container->setResponse($response);
 
                 // 处理$request相关
                 $requestHandle = new HttpRequestHandle($request);
 
-                $returnData = call_user_func_array($this->container()->getRouteCallback(), $requestHandle->getRequestArgs());
+                $returnData = call_user_func_array($this->container->getRouteCallback(), $requestHandle->getRequestArgs());
 
                 //数据返回至客户端
                 $response->end(Spanner::response($returnData));
@@ -88,7 +88,7 @@ trait HttpEvents
                 $response->end(Spanner::response($exceptionHandle->getResponse()));
             }
             //主动关闭本次连接
-            $this->container()->getServer()->close($response->fd);
+            $this->server->close($response->fd);
         });
     }
 }

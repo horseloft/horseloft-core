@@ -12,7 +12,7 @@ trait Events
      */
     private function onWorkerStart()
     {
-        $this->container()->getServer()->on('workerStart', function(\Swoole\Server $server, int $workerId) {
+        $this->server->on('workerStart', function(\Swoole\Server $server, int $workerId) {
             if(isset($server->setting['worker_num']) && $workerId >= $server->setting['worker_num']) {
                 if ("Darwin" != PHP_OS) {
                     swoole_set_process_name('php: task_' . ($workerId - $server->setting['worker_num']));
@@ -41,7 +41,7 @@ trait Events
      */
     private function onTask()
     {
-        $this->container()->getServer()->on('task', function (\Swoole\Server $server, int $task_id, int $src_worker_id, $data) {
+        $this->server->on('task', function (\Swoole\Server $server, int $task_id, int $src_worker_id, $data) {
             $handle = '';
             if (isset($data['function']) && is_callable($data['function'])) {
                 if (isset($data['params'])) {
@@ -64,7 +64,7 @@ trait Events
      */
     private function onFinish()
     {
-        $this->container()->getServer()->on('finish', function (\Swoole\Server $server, int $task_id, $data) {
+        $this->server->on('finish', function (\Swoole\Server $server, int $task_id, $data) {
 
         });
     }
