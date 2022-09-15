@@ -30,11 +30,11 @@ class CrontabHandle
             }
 
             // 斜线分割的时间 斜线右侧应是符号* 或者 数字
-            if (strpos('/', $command) !== false) {
+            if (strpos($command, '/') !== false) {
                 $commandExp = explode('/', $command);
                 $masterCommand = $this->crontabTimeExplode($index, $commandExp[0]);
-                $timeSpace = $this->crontabTimeExplode($index, $commandExp[1]);
-                if (!is_array($masterCommand) || !is_int($timeSpace)) {
+                $timeSpace = intval($commandExp[1]);
+                if (empty($masterCommand) || $timeSpace <= 0) {
                     continue;
                 }
                 $runTime = [];
@@ -50,8 +50,11 @@ class CrontabHandle
                 continue;
             }
 
-            // 逗号分割或短横线分割
-            array_push($commandRun, $this->crontabTimeExplode($index, $command));
+            // 逗号分割或短横线分割或日期数字
+            $default = $this->crontabTimeExplode($index, $command);
+            if (!empty($default)) {
+                array_push($commandRun, $default);
+            }
         }
         $commandRun = array_filter($commandRun);
         if (count($commandRun) != 5) {
